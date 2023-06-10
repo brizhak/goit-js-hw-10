@@ -57,7 +57,7 @@ function showBreed(returnedPromise) {
     divEl.style.display = 'none';
     loaderS.style.display = 'block';
     loaderEl.style.display = 'block';
-    const returnedPromise = await fetchCatByBreed(breedId, errorEl);
+    const returnedPromise = await fetchCatByBreed(breedId, errorEl, loaderEl, loaderS, selectEl);
     showBreed(returnedPromise);
     divEl.style.display = 'block';
     selectEl.style.display = 'block';
