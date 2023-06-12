@@ -38,6 +38,7 @@ export function fetchCatByBreed(breedId, errorEl, loaderEl, loaderS, selectEl) {
         loaderS.style.display = 'none';
         loaderEl.style.display = 'none';
         selectEl.style.display = 'block';
+        throw error;
     })
 
 }

@@ -1,5 +1,6 @@
 import SlimSelect from 'slim-select';
 import {fetchBreeds, fetchCatByBreed} from './cat-api.js';
+import Notiflix from 'notiflix';
 
 const selectEl = document.querySelector('.breed-select');
 const divEl = document.querySelector('.cat-info');
@@ -19,15 +20,20 @@ function takeBreeds(response) {
 }
 
 async function addBreeds() {
-    const response = await fetchBreeds(errorEl);
-    takeBreeds(response);
-    let listOfBreedsEl = breeds.map(i => {
-        let optionEl = document.createElement('option');
-        optionEl.value = i.id;
-        optionEl.textContent = i.name;
-        return optionEl;
-    });
-    selectEl.append(...listOfBreedsEl)
+    try {
+        const response = await fetchBreeds(errorEl);
+        takeBreeds(response);
+        let listOfBreedsEl = breeds.map(i => {
+            let optionEl = document.createElement('option');
+            optionEl.value = i.id;
+            optionEl.textContent = i.name;
+            return optionEl;
+        });
+        selectEl.append(...listOfBreedsEl);
+    } catch (error) {
+        Notiflix.Notify.failure(errorEl.textContent);
+        throw error; 
+    }
 }
 
 addBreeds();
@@ -51,17 +57,32 @@ function showBreed(returnedPromise) {
     loaderEl.style.display = 'none';
 }
 
- async function onSelectChange(event) {
-    const breedId = selectEl.options[selectEl.selectedIndex].value;
-    selectEl.style.display = 'none';
-    divEl.style.display = 'none';
-    loaderS.style.display = 'block';
-    loaderEl.style.display = 'block';
-    const returnedPromise = await fetchCatByBreed(breedId, errorEl, loaderEl, loaderS, selectEl);
-    showBreed(returnedPromise);
-    divEl.style.display = 'block';
-    selectEl.style.display = 'block';
+async function onSelectChange(event) {
+    try {
+        const breedId = selectEl.options[selectEl.selectedIndex].value;
+        selectEl.style.display = 'none';
+        divEl.style.display = 'none';
+        loaderS.style.display = 'block';
+        loaderEl.style.display = 'block';
+        const returnedPromise = await fetchCatByBreed(breedId, errorEl, loaderEl, loaderS, selectEl);
+        showBreed(returnedPromise);
+        divEl.style.display = 'block';
+        selectEl.style.display = 'block';
+    } catch (error) {
+        Notiflix.Notify.failure(errorEl.textContent);
+        loaderS.style.display = 'none';
+        loaderEl.style.display = 'none';
+        selectEl.style.display = 'block';
+    }
 }
+
+
+
+
+
+
+
+
 
 new SlimSelect({
     select: '.select-breed'
